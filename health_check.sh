@@ -1,12 +1,16 @@
 #!/bin/bash
 
-#clear screen  for a clean look
+# clear screen for a clean look
+
+PROCESS_COUNT=6
+HOSTNAME=$(hostname)
+DATE=$(date)
 
 echo ""
-echo "System Health check"
+echo "System Health check - $HOSTNAME"
 echo ""
-date
-echo ""
+
+echo "$DATE"
 
 echo "Memory"
 free -h
@@ -17,11 +21,11 @@ df -h | grep '^/dev/'
 echo ""
 
 echo "Top Process (CPU %)"
-ps aux --sort=-%cpu | head -n 6
+ps aux --sort=-%cpu | head -n $PROCESS_COUNT
 echo ""
 
 echo "Listeneing Ports"
-ss -tuln4
+ss -tulnp
 echo ""
 
 echo "Failed Services"
