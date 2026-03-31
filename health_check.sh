@@ -28,8 +28,24 @@ ps aux --sort=-%cpu | head -n $PROCESS_COUNT
 }
 
 check_ports(){
-echo "Listeneing Ports"
-ss -tulnp
+    echo "LISTENING PORTS"
+
+    # 1. Define the ports to check
+    PORTS=(22 80 443)
+
+    # 2. Loop through each port
+    for PORT in "${PORTS[@]}"; do
+
+        # 3. Check if the port appears in ss output
+        # -q means "quiet" (don't print the match, just check if it exists)
+        # :$PORT ensures we match ":80" and not something like "8080"
+        if ss -tuln | grep -q ":$PORT "; then
+            # 4. Print the result
+            echo "PORT $PORT: OPEN"
+        else
+            echo "PORT $PORT: NOT LISTENING"
+        fi
+    done
 }
 
 check_services(){
