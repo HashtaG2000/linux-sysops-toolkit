@@ -1,20 +1,12 @@
 #!/bin/bash
-
 # clear screen for a clean look
-
 PROCESS_COUNT=6
-HOSTNAME=$(hostname)
+SYS_HOSTNAME=$(hostname)
 DATE=$(date)
 
-echo ""
-echo "System Health check - $HOSTNAME"
-echo ""
-
-echo "$DATE"
-
+check_memory() {
 echo "Memory"
 AVAILABLE_MEM=$(free -m | grep Mem | awk '{print $7}')
-
 #If else loop for memery status
 if [ "$AVAILABLE_MEM" -lt 500 ]; then
     echo "STATUS: WARNING - Low memory ($AVAILABLE_MEM MB)"
@@ -23,24 +15,37 @@ elif [ "$AVAILABLE_MEM" -lt 1000 ]; then
 else
     echo "STATUS: OK ($AVAILABLE_MEM MB)"
 fi
-echo ""
+}
 
+check_disk(){
 echo "Disk"
 df -h | grep '^/dev/'
-echo ""
+}
 
+check_processes(){
 echo "Top Process (CPU %)"
 ps aux --sort=-%cpu | head -n $PROCESS_COUNT
-echo ""
+}
 
+check_ports(){
 echo "Listeneing Ports"
 ss -tulnp
-echo ""
+}
 
+check_services(){
 echo "Failed Services"
 systemctl --failed --no-pager
-echo ""
+}
 
-echo ""
-echo "Check Complete"
-echo ""
+main() {
+    echo "System Health Check - $SYS_HOSTNAME"
+    echo "$DATE"
+    check_memory
+    check_disk
+    check_processes
+    check_ports
+    check_services
+    echo "Check Complete"
+}
+
+main
