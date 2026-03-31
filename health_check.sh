@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # clear screen for a clean look
 PROCESS_COUNT=6
 SYS_HOSTNAME=$(hostname)
@@ -46,7 +47,7 @@ check_ports() {
 
 check_services(){
 echo "Failed Services"
-systemctl --failed --no-pager
+systemctl --failed --no-pager || true
 }
 
 main() {
@@ -61,3 +62,4 @@ main() {
 }
 
 main
+
