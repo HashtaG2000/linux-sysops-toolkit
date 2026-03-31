@@ -27,24 +27,20 @@ echo "Top Process (CPU %)"
 ps aux --sort=-%cpu | head -n $PROCESS_COUNT
 }
 
-check_ports(){
-    echo "LISTENING PORTS"
+check_single_port() {
+    local PORT=$1
+    if ss -tuln | grep -q ":$PORT "; then
+        echo "PORT $PORT: OPEN"
+    else
+        echo "PORT $PORT: NOT LISTENING"
+    fi
+}
 
-    # 1. Define the ports to check
+check_ports() {
+    echo "=== LISTENING PORTS ==="
     PORTS=(22 80 443)
-
-    # 2. Loop through each port
     for PORT in "${PORTS[@]}"; do
-
-        # 3. Check if the port appears in ss output
-        # -q means "quiet" (don't print the match, just check if it exists)
-        # :$PORT ensures we match ":80" and not something like "8080"
-        if ss -tuln | grep -q ":$PORT "; then
-            # 4. Print the result
-            echo "PORT $PORT: OPEN"
-        else
-            echo "PORT $PORT: NOT LISTENING"
-        fi
+        check_single_port $PORT
     done
 }
 
